@@ -5,8 +5,8 @@ import readline from "readline";
 let ROWS = 0;
 let COLS = 0;
 const BOARD: string[][] = [];
-const SYMBOLS = ["#", "*", "+", "$", "/", "@", "&", "%", "-"];
-// const SYMBOLS = /[\#\*\+\$\/\@\&\%\-]/g;
+
+type BoardChar = { value: string; hasSymbol: boolean };
 
 async function solve() {
   const rl = readline.createInterface({
@@ -14,7 +14,7 @@ async function solve() {
     crlfDelay: Infinity,
   });
 
-  rl.on("line", (line) => {
+  rl.on("line", line => {
     const lineSplit = line.split("");
     BOARD.push(lineSplit);
     ROWS += 1;
@@ -22,30 +22,30 @@ async function solve() {
   });
   await events.once(rl, "close");
 
-  let vals = [];
+  let numbers = [];
+  let chars: BoardChar[] = [];
   for (let i = 0; i < ROWS; i++) {
-    let acc = [];
     for (let j = 0; j < COLS; j++) {
       const current = BOARD[i][j];
       const isNum = !isNaN(parseInt(current));
 
       if (isNum) {
-        acc.push({ value: current, hasSymbol: hasSymbolArround(i, j) });
+        chars.push({ value: current, hasSymbol: hasSymbolAround(i, j) });
       } else {
-        if (acc.some((it) => it.hasSymbol)) {
-          vals.push(acc.map((it) => it.value).join(""));
+        if (chars.some(c => c.hasSymbol)) {
+          numbers.push(chars.map(c => c.value).join(""));
         }
-        acc = [];
+        chars = [];
       }
     }
   }
 
   console.log(
-    vals.map((it) => parseInt(it)).reduce((acc, curr) => acc + curr, 0),
+    numbers.map(n => parseInt(n)).reduce((acc, curr) => acc + curr, 0),
   );
 }
 
-function hasSymbolArround(x: number, y: number) {
+function hasSymbolAround(x: number, y: number) {
   const surroundings: boolean[] = [];
 
   for (let i = x - 1; i <= x + 1; i++) {
@@ -61,7 +61,7 @@ function hasSymbolArround(x: number, y: number) {
     }
   }
 
-  return surroundings.some((x) => x);
+  return surroundings.some(x => x);
 }
 
 (async function main() {
