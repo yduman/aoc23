@@ -5,8 +5,6 @@ import readline from "readline";
 type Card = { left: number[]; right: number[] };
 const CARDS: Card[] = [];
 
-type CardMatch = [number, number];
-
 async function parseInput() {
   const rl = readline.createInterface({
     input: fs.createReadStream("./input.txt"),
@@ -27,7 +25,7 @@ async function parseInput() {
   await events.once(rl, "close");
 }
 
-async function solvePart1() {
+function solvePart1() {
   const matches: number[] = [];
 
   CARDS.forEach(card => {
@@ -42,7 +40,7 @@ async function solvePart1() {
   );
 }
 
-async function solvePart2() {
+function solvePart2() {
   const scratchCards: number[] = new Array(CARDS.length).fill(1);
 
   CARDS.forEach((card, idx) => {
@@ -63,7 +61,7 @@ async function solvePart2() {
 (async function main() {
   await parseInput();
   console.log("==== Solution Part 1 ====");
-  await solvePart1();
+  solvePart1();
   console.log("==== Solution Part 2 ====");
-  await solvePart2();
+  solvePart2();
 })();
